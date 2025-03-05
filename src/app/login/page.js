@@ -4,8 +4,14 @@ import { Form, Formik, Field } from 'formik';
 import Link from 'next/link';
 import React from 'react';
 import * as Yup from 'yup';
+import bcrypt from 'bcryptjs';
+import { useRouter } from 'next/navigation';
+// import useAuthStore from '../zustand/store';
 
 const Login = () => {
+	const router = useRouter();
+	// const { setUser } = useAuthStore();
+
 	const validationSchema = Yup.object().shape({
 		email: Yup.string().email('Please enter valid email').required('Required'),
 		password: Yup.string()
@@ -14,8 +20,17 @@ const Login = () => {
 	});
 
 	const handleSubmit = (values, props) => {
-		console.log(values);
-        
+		// console.log(values);
+		const users = JSON.parse(localStorage.getItem('users'));
+		let user = users.find((u) => values.email === u.email);
+		if (!user || !bcrypt.compareSync(values.password, user.confirmpassword)) {
+			alert('Email or Password error');
+			return;
+		} else {
+			localStorage.setItem('currentUser', JSON.stringify(user));
+			// setUser(user);
+			router.push('/products');
+		}
 		props.resetForm();
 	};
 

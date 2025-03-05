@@ -12,10 +12,12 @@ import Link from 'next/link';
 import React from 'react';
 import * as Yup from 'yup';
 import bcrypt from 'bcryptjs';
+import { useRouter } from 'next/navigation';
 
-const salt = bcrypt.genSaltSync(10);
+// const salt = bcrypt.genSaltSync(10);
 
 const SignUp = () => {
+	const router = useRouter();
 	const validationSchema = Yup.object().shape({
 		firstname: Yup.string().min(3, "It's too short").required('Required'),
 		lastname: Yup.string().min(3, "It's too short").required('Required'),
@@ -36,17 +38,29 @@ const SignUp = () => {
 	});
 
 	const handleSubmit = async (values, props) => {
+		let users = JSON.parse(localStorage.getItem('users')) || [];
+
+		if (users.find((user) => user.email === values.email)) {
+			alert('Email already exists');
+			return;
+		}
+
 		// console.log(values);
 		const hashed = bcrypt.hashSync(values.confirmpassword);
 		// console.log(hashed)
-		const encryptedData = {
+		const newUser = {
 			...values,
 			confirmpassword: hashed,
+			password: hashed,
 		};
-		console.log(encryptedData);
+		users.push(newUser);
+		localStorage.setItem('users', JSON.stringify(users));
+		localStorage.setItem('currentUser', JSON.stringify(newUser));
+		// console.log(encryptedData);
 		// const decrypt = await bcrypt.compareSync("Srivasanth#23", hashed)
 		// console.log(decrypt)
 		props.resetForm();
+		router.push("/products")
 	};
 
 	return (
