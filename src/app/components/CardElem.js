@@ -7,9 +7,8 @@ import {
 	Rating,
 	Typography,
 } from '@mui/material';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 const CardElem = ({ each }) => {
 	const router = useRouter();
@@ -55,6 +54,7 @@ const CardElem = ({ each }) => {
 					width: '100%',
 				}}
 			>
+				{/* Other elemenets */}
 				<Box
 					sx={{
 						// bgcolor: 'products.dark',
@@ -110,6 +110,7 @@ const CardElem = ({ each }) => {
 						paddingTop: 1,
 					}}
 				>
+					{/* Price Container  */}
 					<Box
 						display='flex'
 						flexDirection='column'

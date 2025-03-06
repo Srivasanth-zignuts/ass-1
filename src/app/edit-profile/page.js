@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 const EditProfile = () => {
 	const router = useRouter();
 	const [userState, setUserState] = useState(null);
-
+	//validation schema
 	const validationSchema = Yup.object().shape({
 		firstname: Yup.string().min(3, "It's too short").required('Required'),
 		lastname: Yup.string().min(3, "It's too short").required('Required'),
@@ -30,6 +30,7 @@ const EditProfile = () => {
 	const handleSubmit = (values) => {
 		let users = JSON.parse(localStorage.getItem('users')) || [];
 
+		//find user and edit
 		const userIndex = users.findIndex((user) => user.email === userState.email);
 		if (userIndex !== -1) {
 			users[userIndex] = values;
@@ -63,7 +64,7 @@ const EditProfile = () => {
 				>
 					Edit Profile
 				</Typography>
-
+				{/* Edit Profile container */}
 				{userState && (
 					<Formik
 						initialValues={userState}

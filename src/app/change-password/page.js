@@ -10,6 +10,7 @@ const ChangePassword = () => {
 	const router = useRouter();
 	const [userState, setUserState] = useState(null);
 
+	//form validation
 	const validationSchema = Yup.object().shape({
 		password: Yup.string().required('Required'),
 		newpassword: Yup.string()
@@ -25,6 +26,7 @@ const ChangePassword = () => {
 	});
 
 	useEffect(() => {
+		//to authenticate that user is logged in or not
 		const user = JSON.parse(localStorage.getItem('currentUser'));
 		if (!user) {
 			router.push('/login');
@@ -42,12 +44,14 @@ const ChangePassword = () => {
 			return;
 		}
 
+		//compare current password with stored password
 		const isMatch = bcrypt.compareSync(values.password, userState.password);
 		if (!isMatch) {
 			alert('Current password is incorrect');
 			return;
 		}
 
+		//to compare new password wih old password
 		const isSameAsOld = bcrypt.compareSync(
 			values.newpassword,
 			userState.password
@@ -57,6 +61,7 @@ const ChangePassword = () => {
 			return;
 		}
 
+		//hash password and add
 		const hashedPassword = bcrypt.hashSync(values.newpassword, 10);
 		users[userIndex] = {
 			...users[userIndex],
@@ -94,6 +99,7 @@ const ChangePassword = () => {
 					Change Password
 				</Typography>
 
+				{/* Form container */}
 				{userState && (
 					<Formik
 						initialValues={{

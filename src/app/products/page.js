@@ -8,12 +8,12 @@ import {
 	Menu,
 	MenuItem,
 	Pagination,
+	Paper,
 	Toolbar,
 	Typography,
 } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-// import useAuthStore from '../zustand/store';
 import { useRouter } from 'next/navigation';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CardElem from '../components/CardElem';
@@ -23,7 +23,6 @@ const ProductsFetch = () => {
 	const [currentPage, setcurrentPage] = useState(1);
 	const [products, setproducts] = useState([]);
 	const [anchorEl, setAnchorEl] = useState(null);
-	// const {isAuthenticated} = useAuthStore();
 	const router = useRouter();
 	// const [skip, setSkip] = useState(0);
 	const limit = 8;
@@ -33,6 +32,7 @@ const ProductsFetch = () => {
 		if (!user) {
 			router.push('/login');
 		}
+		//fetches product data
 		const fetchdata = async () => {
 			try {
 				const skip = (currentPage - 1) * limit;
@@ -79,7 +79,7 @@ const ProductsFetch = () => {
 
 	return (
 		<Container
-			maxWidth='sm'
+			maxWidth='xs'
 			sx={{
 				display: 'flex',
 				flexDirection: 'column',
@@ -94,16 +94,11 @@ const ProductsFetch = () => {
 					width: '100vw',
 				}}
 			>
-				<AppBar position='static'>
-					<Toolbar
-					// sx={{
-					// 	width: '80vw',
-					// 	display: 'flex',
-					// 	flexDirection: 'row',
-					// 	justifyContent: 'center',
-					// 	alignItems: 'center',
-					// }}
-					>
+				<AppBar
+					position='static'
+					sx={{ px: 5 }}
+				>
+					<Toolbar>
 						<Typography
 							variant='h4'
 							component='div'

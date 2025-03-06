@@ -18,6 +18,8 @@ import { useRouter } from 'next/navigation';
 
 const SignUp = () => {
 	const router = useRouter();
+
+	//form validation using Yup
 	const validationSchema = Yup.object().shape({
 		firstname: Yup.string().min(3, "It's too short").required('Required'),
 		lastname: Yup.string().min(3, "It's too short").required('Required'),
@@ -46,7 +48,7 @@ const SignUp = () => {
 		}
 
 		// console.log(values);
-		const hashed = bcrypt.hashSync(values.confirmpassword);
+		const hashed = bcrypt.hashSync(values.confirmpassword); //password hashing for secqurity
 		// console.log(hashed)
 		const newUser = {
 			...values,
@@ -82,6 +84,7 @@ const SignUp = () => {
 				>
 					SignUp
 				</Typography>
+				{/* Form container */}
 				<Formik
 					onSubmit={handleSubmit}
 					initialValues={{

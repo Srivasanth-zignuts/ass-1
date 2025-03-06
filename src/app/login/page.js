@@ -6,11 +6,9 @@ import React from 'react';
 import * as Yup from 'yup';
 import bcrypt from 'bcryptjs';
 import { useRouter } from 'next/navigation';
-// import useAuthStore from '../zustand/store';
 
 const Login = () => {
 	const router = useRouter();
-	// const { setUser } = useAuthStore();
 
 	const validationSchema = Yup.object().shape({
 		email: Yup.string().email('Please enter valid email').required('Required'),
@@ -22,9 +20,12 @@ const Login = () => {
 	const handleSubmit = (values, props) => {
 		// console.log(values);
 		const users = JSON.parse(localStorage.getItem('users'));
+		//check user exist in database or not
 		let user = users.find((u) => values.email === u.email);
+
 		if (!user || !bcrypt.compareSync(values.password, user.confirmpassword)) {
 			alert('Email or Password error');
+			router.push('/signup');
 			return;
 		} else {
 			localStorage.setItem('currentUser', JSON.stringify(user));
@@ -53,6 +54,7 @@ const Login = () => {
 				>
 					Login
 				</Typography>
+				{/* Login Form Container */}
 				<Formik
 					onSubmit={handleSubmit}
 					initialValues={{ email: '', password: '' }}
