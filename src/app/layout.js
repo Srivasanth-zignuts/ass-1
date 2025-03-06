@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<ThemeRegestiary>
+				<ThemeRegestiary> 
 					<AppRouterCacheProvider>{children}</AppRouterCacheProvider>
 				</ThemeRegestiary>
 			</body>

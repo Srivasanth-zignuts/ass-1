@@ -60,7 +60,7 @@ const SignUp = () => {
 		// const decrypt = await bcrypt.compareSync("Srivasanth#23", hashed)
 		// console.log(decrypt)
 		props.resetForm();
-		router.push("/products")
+		router.push('/products');
 	};
 
 	return (

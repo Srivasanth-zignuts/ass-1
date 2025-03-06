@@ -11,22 +11,16 @@ const ChangePassword = () => {
 	const [userState, setUserState] = useState(null);
 
 	const validationSchema = Yup.object().shape({
-		password: Yup.string()
-			.matches(/^(?=.*[!@#\$%\^&\*])/, 'Must contain atleast one symbol')
-			.matches(/^(?=.*[a-z])/, 'Must contain atleast one lowercase letter')
-			.matches(/(?=.*[A-Z])/, 'Must contain atleast one uppercase letter')
-			.matches(/^(?=.*[0-9])/, 'Must contain atleast one numeric letter')
-			.min(8, 'Must be at least 8 characters')
-			.required('Required'),
+		password: Yup.string().required('Required'),
 		newpassword: Yup.string()
-			.matches(/^(?=.*[!@#\$%\^&\*])/, 'Must contain atleast one symbol')
-			.matches(/^(?=.*[a-z])/, 'Must contain atleast one lowercase letter')
-			.matches(/(?=.*[A-Z])/, 'Must contain atleast one uppercase letter')
-			.matches(/^(?=.*[0-9])/, 'Must contain atleast one numeric letter')
+			.matches(/^(?=.*[!@#\$%\^&\*])/, 'Must contain at least one symbol')
+			.matches(/^(?=.*[a-z])/, 'Must contain at least one lowercase letter')
+			.matches(/(?=.*[A-Z])/, 'Must contain at least one uppercase letter')
+			.matches(/^(?=.*[0-9])/, 'Must contain at least one numeric letter')
 			.min(8, 'Must be at least 8 characters')
 			.required('Required'),
-		confirmnewppassword: Yup.string()
-			.oneOf([Yup.ref('newpassword')], 'password not matched')
+		confirmnewpassword: Yup.string()
+			.oneOf([Yup.ref('newpassword')], 'Passwords do not match')
 			.required('Required'),
 	});
 
@@ -37,30 +31,47 @@ const ChangePassword = () => {
 		} else {
 			setUserState(user);
 		}
-	}, [router, setUserState]);
+	}, [router]);
 
 	const handleSubmit = (values) => {
 		let users = JSON.parse(localStorage.getItem('users')) || [];
+		const userIndex = users.findIndex((user) => user.email === userState.email);
 
-		if (bcrypt.compareSync(values.password, userState.password)) {
-			const userIndex = users.findIndex(
-				(user) => user.email === userState.email
-			);
-			if (userIndex !== -1) {
-				const hashedNewPassword = bcrypt.hashSync(values.newpassword, 10);
-				users[userIndex] = {
-					...users[userIndex], // Preserve other user details
-					password: hashedNewPassword,
-				};
-				localStorage.setItem('users', JSON.stringify(users));
-				localStorage.removeItem('currentUser');
-
-				alert('Password Updated Successfully');
-				router.push('/login');
-			}
-		} else {
-			alert('Current password is incorrect');
+		if (userIndex === -1) {
+			alert('User not found!');
+			return;
 		}
+
+		const isMatch = bcrypt.compareSync(values.password, userState.password);
+		if (!isMatch) {
+			alert('Current password is incorrect');
+			return;
+		}
+
+		const isSameAsOld = bcrypt.compareSync(
+			values.newpassword,
+			userState.password
+		);
+		if (isSameAsOld) {
+			alert('New password must be different from the current password');
+			return;
+		}
+
+		const hashedPassword = bcrypt.hashSync(values.newpassword, 10);
+		users[userIndex] = {
+			...users[userIndex],
+			password: hashedPassword,
+			confirmpassword: hashedPassword,
+		};
+		localStorage.setItem('users', JSON.stringify(users));
+
+		localStorage.setItem(
+			'currentUser',
+			JSON.stringify({ ...userState, password: hashedPassword })
+		);
+
+		alert('Password Updated Successfully');
+		router.push('/login');
 	};
 
 	return (
@@ -80,7 +91,7 @@ const ChangePassword = () => {
 					variant='h5'
 					gutterBottom
 				>
-					Change password
+					Change Password
 				</Typography>
 
 				{userState && (
@@ -88,9 +99,8 @@ const ChangePassword = () => {
 						initialValues={{
 							password: '',
 							newpassword: '',
-							confirmnewppassword: '',
+							confirmnewpassword: '',
 						}}
-						enableReinitialize={true}
 						validationSchema={validationSchema}
 						onSubmit={handleSubmit}
 					>
@@ -102,21 +112,25 @@ const ChangePassword = () => {
 									margin='normal'
 									label='Current Password'
 									variant='outlined'
+									type='password'
 									name='password'
 									value={values.password}
 									onChange={handleChange}
 									helperText={errors.password}
+									error={!!errors.password}
 								/>
 								<Field
 									as={TextField}
 									fullWidth
 									margin='normal'
-									label='New password'
+									label='New Password'
 									variant='outlined'
+									type='password'
 									name='newpassword'
 									value={values.newpassword}
 									onChange={handleChange}
 									helperText={errors.newpassword}
+									error={!!errors.newpassword}
 								/>
 								<Field
 									as={TextField}
@@ -124,10 +138,12 @@ const ChangePassword = () => {
 									margin='normal'
 									label='Confirm New Password'
 									variant='outlined'
-									name='confirmnewppassword'
-									value={values.confirmnewppassword}
+									type='password'
+									name='confirmnewpassword'
+									value={values.confirmnewpassword}
 									onChange={handleChange}
-									helperText={errors.confirmnewppassword}
+									helperText={errors.confirmnewpassword}
+									error={!!errors.confirmnewpassword}
 								/>
 								<Button
 									type='submit'

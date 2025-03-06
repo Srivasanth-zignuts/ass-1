@@ -22,7 +22,7 @@ const Productpage = () => {
 
 	console.log(product);
 	if (!product) {
-		return <div> Loading...</div>;
+		return <Container maxWidth='xs'> Loading...</Container>;
 	}
 
 	return (
@@ -33,7 +33,7 @@ const Productpage = () => {
 			<ProductDetails
 				id={product.id}
 				thumbnail={product.thumbnail}
-				brand = {product.brand}
+				brand={product.brand}
 				title={product.title}
 				description={product.description}
 				category={product.category}
